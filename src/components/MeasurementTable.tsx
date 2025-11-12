@@ -8,14 +8,17 @@ import {
 } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Trash2 } from "lucide-react";
 import { Measurement } from "@/types/measurement";
 import { getBloodPressureStatus, getGlucoseStatus } from "@/lib/measurementUtils";
 
 interface MeasurementTableProps {
   measurements: Measurement[];
+  onDelete?: (id: number) => void;
 }
 
-export const MeasurementTable = ({ measurements }: MeasurementTableProps) => {
+export const MeasurementTable = ({ measurements, onDelete }: MeasurementTableProps) => {
   return (
     <Card>
       <CardHeader>
@@ -32,6 +35,7 @@ export const MeasurementTable = ({ measurements }: MeasurementTableProps) => {
                 <TableHead>Glicemia (mg/dL)</TableHead>
                 <TableHead>Pulso (bpm)</TableHead>
                 <TableHead>Status</TableHead>
+                {onDelete && <TableHead className="w-[50px]"></TableHead>}
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -58,6 +62,18 @@ export const MeasurementTable = ({ measurements }: MeasurementTableProps) => {
                         </Badge>
                       </div>
                     </TableCell>
+                    {onDelete && (
+                      <TableCell>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => onDelete(measurement.id)}
+                          className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </TableCell>
+                    )}
                   </TableRow>
                 );
               })}
