@@ -1,6 +1,8 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { Measurement } from "@/types/measurement";
 import { parseMeasurements } from "@/lib/measurementUtils";
+import { toast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
 
 const STORAGE_KEY = "health-measurements";
 
@@ -43,7 +45,30 @@ export const MeasurementProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const deleteMeasurement = (id: number) => {
+    const deletedMeasurement = measurements.find(m => m.id === id);
+    if (!deletedMeasurement) return;
+
     setMeasurements(measurements.filter(m => m.id !== id));
+
+    toast({
+      title: "Medição excluída",
+      description: "A medição foi removida do histórico",
+      action: (
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => {
+            setMeasurements(prev => [...prev, deletedMeasurement].sort((a, b) => a.id - b.id));
+            toast({
+              title: "Medição restaurada",
+              description: "A medição foi restaurada com sucesso",
+            });
+          }}
+        >
+          Desfazer
+        </Button>
+      ),
+    });
   };
 
   return (

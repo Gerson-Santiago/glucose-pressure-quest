@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
 import { Measurement } from "@/types/measurement";
 import { getBloodPressureStatus, getGlucoseStatus } from "@/lib/measurementUtils";
+import { useSettings } from "@/contexts/SettingsContext";
 
 interface MeasurementTableProps {
   measurements: Measurement[];
@@ -19,6 +20,8 @@ interface MeasurementTableProps {
 }
 
 export const MeasurementTable = ({ measurements, onDelete }: MeasurementTableProps) => {
+  const { showStatus, showDeleteButtons } = useSettings();
+  
   return (
     <Card>
       <CardHeader>
@@ -34,8 +37,8 @@ export const MeasurementTable = ({ measurements, onDelete }: MeasurementTablePro
                 <TableHead>PA (mmHg)</TableHead>
                 <TableHead>Glicemia (mg/dL)</TableHead>
                 <TableHead>Pulso (bpm)</TableHead>
-                <TableHead>Status</TableHead>
-                {onDelete && <TableHead className="w-[50px]"></TableHead>}
+                {showStatus && <TableHead>Status</TableHead>}
+                {onDelete && showDeleteButtons && <TableHead className="w-[50px]"></TableHead>}
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -52,17 +55,19 @@ export const MeasurementTable = ({ measurements, onDelete }: MeasurementTablePro
                     </TableCell>
                     <TableCell>{measurement.glucose}</TableCell>
                     <TableCell>{measurement.pulse}</TableCell>
-                    <TableCell>
-                      <div className="flex gap-1 flex-wrap">
-                        <Badge variant={bpStatus.variant} className="text-xs">
-                          PA: {bpStatus.status}
-                        </Badge>
-                        <Badge variant={glucoseStatus.variant} className="text-xs">
-                          Gli: {glucoseStatus.status}
-                        </Badge>
-                      </div>
-                    </TableCell>
-                    {onDelete && (
+                    {showStatus && (
+                      <TableCell>
+                        <div className="flex gap-1 flex-wrap">
+                          <Badge variant={bpStatus.variant} className="text-xs">
+                            PA: {bpStatus.status}
+                          </Badge>
+                          <Badge variant={glucoseStatus.variant} className="text-xs">
+                            Gli: {glucoseStatus.status}
+                          </Badge>
+                        </div>
+                      </TableCell>
+                    )}
+                    {onDelete && showDeleteButtons && (
                       <TableCell>
                         <Button
                           variant="ghost"

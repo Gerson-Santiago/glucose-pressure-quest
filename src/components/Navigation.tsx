@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Menu, X, Home, LineChart, History } from "lucide-react";
+import { Menu, X, Home, LineChart, History, Settings } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { Button } from "@/components/ui/button";
 
@@ -10,6 +10,7 @@ export const Navigation = () => {
     { to: "/", icon: Home, label: "Home" },
     { to: "/charts", icon: LineChart, label: "Gráficos" },
     { to: "/history", icon: History, label: "Histórico" },
+    { to: "/settings", icon: Settings, label: "Configurações" },
   ];
 
   return (
