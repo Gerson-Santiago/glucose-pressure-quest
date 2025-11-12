@@ -1,22 +1,14 @@
-import { useState } from "react";
 import { Activity, Heart, Droplet, TrendingUp } from "lucide-react";
 import { MetricCard } from "@/components/MetricCard";
-import { MeasurementChart } from "@/components/MeasurementChart";
-import { MeasurementTable } from "@/components/MeasurementTable";
 import { AddMeasurementForm } from "@/components/AddMeasurementForm";
-import { parseMeasurements, calculateStats, getBloodPressureStatus, getGlucoseStatus } from "@/lib/measurementUtils";
-import { Measurement } from "@/types/measurement";
+import { useMeasurements } from "@/contexts/MeasurementContext";
+import { calculateStats, getBloodPressureStatus, getGlucoseStatus } from "@/lib/measurementUtils";
 
 const Index = () => {
-  const [measurements, setMeasurements] = useState<Measurement[]>(parseMeasurements(""));
+  const { measurements, addMeasurement } = useMeasurements();
 
   const stats = calculateStats(measurements);
   const lastMeasurement = stats.lastMeasurement;
-
-  const handleAddMeasurement = (newMeasurement: Omit<Measurement, "id">) => {
-    const newId = measurements.length > 0 ? Math.max(...measurements.map(m => m.id)) + 1 : 1;
-    setMeasurements([...measurements, { ...newMeasurement, id: newId }]);
-  };
 
   const bpStatus = lastMeasurement 
     ? getBloodPressureStatus(lastMeasurement.systolic, lastMeasurement.diastolic)
@@ -30,7 +22,7 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-foreground mb-2">Monitor de Saúde</h1>
+          <h2 className="text-3xl font-bold text-foreground mb-2">Bem-vindo</h2>
           <p className="text-muted-foreground">Acompanhe suas medições de glicemia e pressão arterial</p>
         </div>
 
@@ -63,16 +55,7 @@ const Index = () => {
           />
         </div>
 
-        <div className="mb-8">
-          <AddMeasurementForm onAdd={handleAddMeasurement} />
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          <MeasurementChart measurements={measurements} type="glucose" />
-          <MeasurementChart measurements={measurements} type="pressure" />
-        </div>
-
-        <MeasurementTable measurements={[...measurements].reverse()} />
+        <AddMeasurementForm onAdd={addMeasurement} />
       </div>
     </div>
   );
