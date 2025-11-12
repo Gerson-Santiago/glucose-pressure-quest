@@ -1,0 +1,88 @@
+// import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+// import { Measurement } from "@/types/measurement";
+// import { parseMeasurements } from "@/lib/measurementUtils";
+// import { toast } from "@/hooks/use-toast";
+// import { Button } from "@/components/ui/button";
+// import { getMeasurements, addMeasurement, deleteMeasurement } from "@/services/api";
+
+// const STORAGE_KEY = "health-measurements";
+
+// const initialData = `1,06/11/2025,20:30:00,146/107,109,74
+// 2,07/11/2025,05:40:00,132/85,97,55
+// 3,07/11/2025,23:07:00,155/94,114,85
+// 4,08/11/2025,06:26:00,131/93,93,81
+// 5,08/11/2025,22:30:00,140/91,106,72
+// 6,09/11/2025,07:27:00,139/80,118,67
+// 7,10/11/2025,07:32:00,125/83,110,68
+// 8,10/11/2025,20:52:00,138/89,132,82
+// 9,11/11/2025,07:30:00,135/89,83,61
+// 10,11/11/2025,21:44:00,137/90,106,69
+// 11,12/11/2025,06:16:00,137/98,104,52`;
+
+// interface MeasurementContextType {
+//   measurements: Measurement[];
+//   addMeasurement: (measurement: Omit<Measurement, "id">) => void;
+//   deleteMeasurement: (id: number) => void;
+// }
+
+// const MeasurementContext = createContext<MeasurementContextType | undefined>(undefined);
+
+// export const MeasurementProvider = ({ children }: { children: ReactNode }) => {
+//   const [measurements, setMeasurements] = useState<Measurement[]>(() => {
+//     const stored = localStorage.getItem(STORAGE_KEY);
+//     if (stored) {
+//       return JSON.parse(stored);
+//     }
+//     return parseMeasurements(initialData);
+//   });
+
+//   useEffect(() => {
+//     localStorage.setItem(STORAGE_KEY, JSON.stringify(measurements));
+//   }, [measurements]);
+
+//   const addMeasurement = (newMeasurement: Omit<Measurement, "id">) => {
+//     const newId = measurements.length > 0 ? Math.max(...measurements.map(m => m.id)) + 1 : 1;
+//     setMeasurements([...measurements, { ...newMeasurement, id: newId }]);
+//   };
+
+//   const deleteMeasurement = (id: number) => {
+//     const deletedMeasurement = measurements.find(m => m.id === id);
+//     if (!deletedMeasurement) return;
+
+//     setMeasurements(measurements.filter(m => m.id !== id));
+
+//     toast({
+//       title: "Medição excluída",
+//       description: "A medição foi removida do histórico",
+//       action: (
+//         <Button
+//           variant="outline"
+//           size="sm"
+//           onClick={() => {
+//             setMeasurements(prev => [...prev, deletedMeasurement].sort((a, b) => a.id - b.id));
+//             toast({
+//               title: "Medição restaurada",
+//               description: "A medição foi restaurada com sucesso",
+//             });
+//           }}
+//         >
+//           Desfazer
+//         </Button>
+//       ),
+//     });
+//   };
+
+//   return (
+//     <MeasurementContext.Provider value={{ measurements, addMeasurement, deleteMeasurement }}>
+//       {children}
+//     </MeasurementContext.Provider>
+//   );
+// };
+
+// export const useMeasurements = () => {
+//   const context = useContext(MeasurementContext);
+//   if (!context) {
+//     throw new Error("useMeasurements must be used within MeasurementProvider");
+//   }
+//   return context;
+// };

@@ -1,8 +1,13 @@
+// src/pages/History.tsx
 import { MeasurementTable } from "@/components/MeasurementTable";
 import { useMeasurements } from "@/contexts/MeasurementContext";
+import { mapApiMeasurements } from "@/lib/measurementUtils";
 
 const History = () => {
   const { measurements, deleteMeasurement } = useMeasurements();
+
+  // ✅ converte os dados da API para o tipo esperado pelo front
+  const frontMeasurements = mapApiMeasurements(measurements);
 
   return (
     <div className="min-h-screen bg-background">
@@ -13,7 +18,7 @@ const History = () => {
         </div>
 
         <MeasurementTable 
-          measurements={[...measurements].reverse()} 
+          measurements={[...frontMeasurements].reverse()} 
           onDelete={deleteMeasurement}
         />
       </div>

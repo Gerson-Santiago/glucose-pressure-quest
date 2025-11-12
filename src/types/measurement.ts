@@ -1,3 +1,4 @@
+// src/types/measurement.ts
 export interface Measurement {
   id: number;
   date: string;

@@ -1,3 +1,4 @@
+// src/contexts/SettingsContext.tsx
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 
 const SETTINGS_KEY = "health-app-settings";

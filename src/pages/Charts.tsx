@@ -1,24 +1,25 @@
+// src/pages/Charts.tsx
+import { mapApiMeasurements } from "@/lib/measurementUtils";
+import { getMeasurements } from "@/services/api";
+import { useEffect, useState } from "react";
 import { MeasurementChart } from "@/components/MeasurementChart";
-import { useMeasurements } from "@/contexts/MeasurementContext";
+import { Measurement as FrontMeasurement } from "@/types/measurement";
 
-const Charts = () => {
-  const { measurements } = useMeasurements();
+export default function Charts() {
+  const [measurements, setMeasurements] = useState<FrontMeasurement[]>([]);
+
+  useEffect(() => {
+    (async () => {
+      const apiData = await getMeasurements();       // retorna Measurement[] da API
+      const mapped = mapApiMeasurements(apiData);    // transforma para FrontMeasurement[]
+      setMeasurements(mapped);
+    })();
+  }, []);
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
-        <div className="mb-6">
-          <h2 className="text-3xl font-bold text-foreground mb-2">Gráficos</h2>
-          <p className="text-muted-foreground">Visualize suas medições ao longo do tempo</p>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <MeasurementChart measurements={measurements} type="glucose" />
-          <MeasurementChart measurements={measurements} type="pressure" />
-        </div>
-      </div>
+    <div className="space-y-6">
+      <MeasurementChart measurements={measurements} type="glucose" />
+      <MeasurementChart measurements={measurements} type="pressure" />
     </div>
   );
-};
-
-export default Charts;
+}
