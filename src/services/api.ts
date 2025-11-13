@@ -42,9 +42,13 @@ export async function addMeasurement(data: Measurement): Promise<ApiResponse> {
   };
 }
 
-// DELETE - exclui uma medição pelo ID
+// POST para deletar uma medição (novo método)
 export async function deleteMeasurement(id: number): Promise<ApiResponse> {
-  const res = await fetch(`${API_URL}?id=${id}`, { method: "DELETE" });
+  const res = await fetch(API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ action: "delete", id }),
+  });
   const json = await res.json();
   return {
     success: !!json.success,
