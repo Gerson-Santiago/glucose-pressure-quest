@@ -50,10 +50,8 @@ export const MeasurementTable = ({ measurements, onDelete }: MeasurementTablePro
 
                 return (
                   <TableRow key={measurement.id}>
-
                     <TableCell className="font-medium">{formatDate(measurement.date)}</TableCell>
                     <TableCell>{formatTime(measurement.time)}</TableCell>
-
                     <TableCell>
                       {measurement.systolic}/{measurement.diastolic}
                     </TableCell>
@@ -62,11 +60,11 @@ export const MeasurementTable = ({ measurements, onDelete }: MeasurementTablePro
                     {showStatus && (
                       <TableCell>
                         <div className="flex gap-1 flex-wrap">
-                          <Badge variant={bpStatus.variant} className="text-xs">
-                            PA: {bpStatus.status}
+                          <Badge variant={bpStatus.variant} className="text-xs px-1 py-0.5">
+                            PA: {bpStatus.label}
                           </Badge>
-                          <Badge variant={glucoseStatus.variant} className="text-xs">
-                            Gli: {glucoseStatus.status}
+                          <Badge variant={glucoseStatus.variant} className="text-xs px-1 py-0.5">
+                            Gli: {glucoseStatus.label}
                           </Badge>
                         </div>
                       </TableCell>
