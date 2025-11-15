@@ -1,6 +1,6 @@
-// src/pages/Index.tsx
+// src/pages/Dashboard.tsx
 import { useState } from "react";
-import { Activity, Heart, Droplet, TrendingUp, BarChart3 } from "lucide-react";
+import { Activity, Heart, Droplet, TrendingUp, BarChart3, Plus } from "lucide-react";
 import { MetricCard } from "@/components/MetricCard";
 import { AddMeasurementForm } from "@/components/AddMeasurementForm";
 import { MeasurementChart } from "@/components/MeasurementChart";
@@ -9,13 +9,15 @@ import { calculateStats, getBloodPressureStatus, getGlucoseStatus } from "@/lib/
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
-const Index = () => {
+// 1. Componente renomeado de Index para Dashboard
+const Dashboard = () => {
   const { measurements, addMeasurement } = useMeasurements();
+  
+  // 2. Nossos dois estados de "mostrar/esconder"
   const [showCharts, setShowCharts] = useState(false);
+  const [showForm, setShowForm] = useState(false); // <-- NOVO ESTADO
 
-  const frontMeasurements = measurements;
-
-  const stats = calculateStats(frontMeasurements);
+  const stats = calculateStats(measurements);
   const lastMeasurement = stats.lastMeasurement;
 
   const bpStatus = lastMeasurement
@@ -30,13 +32,14 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         <div className="mb-8">
-          <h2 className="text-3xl font-bold text-foreground mb-2">Bem-vindo</h2>
+          {/* 3. Título da página atualizado */}
+          <h2 className="text-3xl font-bold text-foreground mb-2">Dashboard</h2>
           <p className="text-muted-foreground">
             Acompanhe suas medições de glicemia e pressão arterial
           </p>
         </div>
 
-        {/* Cards principais */}
+        {/* Cards principais (Sem mudança, apenas acertos de texto) */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <MetricCard
             title="Última Glicemia"
@@ -60,16 +63,42 @@ const Index = () => {
           />
           <MetricCard
             title="Total de Medições"
-            value={frontMeasurements.length.toString()}
+            value={measurements.length.toString()}
             subtitle="Registros no histórico"
             icon={TrendingUp}
           />
         </div>
 
-        {/* Formulário de adição */}
-        <AddMeasurementForm onAdd={addMeasurement} />
+        {/* === 4. SEÇÃO DO FORMULÁRIO (TODA A NOVA LÓGICA) === */}
+        <div className="mt-10 space-y-4">
+          {/* Título e botões de ação */}
+          <div className="flex items-center justify-between">
+            <h3 className="text-2xl font-semibold flex items-center gap-2">
+              <Plus className="w-6 h-6 text-primary" />
+              Adicionar Medição
+            </h3>
+            <div className="flex gap-2">
+              {/* Botão para expandir/recolher */}
+              <Button
+                variant="outline"
+                onClick={() => setShowForm(!showForm)}
+              >
+                {showForm ? "Recolher" : "Expandir"}
+              </Button>
+              {/* Botão para a página dedicada */}
+              <Link to="/add">
+                <Button variant="default">Formulário Completo</Button>
+              </Link>
+            </div>
+          </div>
 
-        {/* Linha “Veja os gráficos” */}
+          {/* O formulário só renderiza se showForm for true */}
+          {showForm && (
+            <AddMeasurementForm onAdd={addMeasurement} />
+          )}
+        </div>
+
+        {/* === SEÇÃO DOS GRÁFICOS (Sem mudança de lógica) === */}
         <div className="mt-10">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-2xl font-semibold flex items-center gap-2">
@@ -86,8 +115,8 @@ const Index = () => {
 
           {showCharts && (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-4">
-              <MeasurementChart measurements={frontMeasurements} type="glucose" />
-              <MeasurementChart measurements={frontMeasurements} type="pressure" />
+              <MeasurementChart measurements={measurements} type="glucose" />
+              <MeasurementChart measurements={measurements} type="pressure" />
             </div>
           )}
 
@@ -97,9 +126,10 @@ const Index = () => {
             </Link>
           </div>
         </div>
+
       </div>
     </div>
   );
 };
 
-export default Index;
+export default Dashboard;

@@ -1,4 +1,4 @@
-// src/App.tsx
+// src/App.tsx <--- é minha marca registrada minha assinatura meu estilo colocar o path relativo ok?
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -7,13 +7,15 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { MeasurementProvider } from "@/contexts/MeasurementContext";
 import { SettingsProvider } from "@/contexts/SettingsContext";
 import { Navigation } from "@/components/Navigation";
-import Index from "./pages/Index";
+
+// Imports das páginas atualizados
+import Dashboard from "./pages/Dashboard";
+import AddMeasurementPage from "./pages/AddMeasurement";
 import Charts from "./pages/Charts";
 import History from "./pages/History";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 import Ajuda from "./pages/Ajuda";
-
 
 const queryClient = new QueryClient();
 
@@ -27,12 +29,15 @@ const App = () => (
           <BrowserRouter>
             <Navigation />
             <Routes>
-              <Route path="/" element={<Index />} />
+              {/* { Rotas atualizadas} */}
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/add" element={<AddMeasurementPage />} />
+
               <Route path="/charts" element={<Charts />} />
               <Route path="/history" element={<History />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="/ajuda" element={<Ajuda />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              {/* novas pages aqui */}
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
