@@ -1,13 +1,13 @@
-// src/components/AddMeasurementForm.tsx
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { toast } from "sonner";
+import { toast } from "sonner"; // 'toast.error' ainda é usado para validação
 import { Plus } from "lucide-react";
 
 interface AddMeasurementFormProps {
+  // MUDANÇA 1: A prop onAdd agora pode ser assíncrona
   onAdd: (measurement: {
     date: string;
     time: string;
@@ -15,7 +15,7 @@ interface AddMeasurementFormProps {
     diastolic: number;
     glucose: number;
     pulse: number;
-  }) => void;
+  }) => Promise<void> | void; // Permite onAdd ser async
 }
 
 export const AddMeasurementForm = ({ onAdd }: AddMeasurementFormProps) => {
@@ -29,17 +29,17 @@ export const AddMeasurementForm = ({ onAdd }: AddMeasurementFormProps) => {
     pulse: "",
   });
 
-  // Função de envio do formulário
-  const handleSubmit = (e: React.FormEvent) => {
+  // MUDANÇA 2: A função de envio agora é 'async'
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // ✅ Validação básica de preenchimento
+    // Validação básica de preenchimento (sem mudança)
     if (!formData.systolic || !formData.diastolic || !formData.glucose || !formData.pulse) {
       toast.error("Por favor, preencha todos os campos");
       return;
     }
 
-    // 🔹 Preparando payload compatível com a nova API
+    // Preparando payload (sem mudança)
     const newMeasurement = {
       date: new Date(formData.date).toISOString().split("T")[0], // YYYY-MM-DD
       time: formData.time.length === 5 ? formData.time + ":00" : formData.time, // HH:MM:SS
@@ -49,23 +49,31 @@ export const AddMeasurementForm = ({ onAdd }: AddMeasurementFormProps) => {
       pulse: parseInt(formData.pulse),
     };
 
-    console.log("Payload enviado:", newMeasurement); // Debug no console
+    console.log("Payload enviado:", newMeasurement);
 
-    // Chama a função passada pelo contexto ou parent para enviar à API
-    onAdd(newMeasurement);
+    try {
+      // MUDANÇA 3: Chamamos o 'onAdd' (do contexto) e 'await' (esperamos)
+      await onAdd(newMeasurement);
 
-    // Reseta o formulário para valores iniciais
-    setFormData({
-      date: new Date().toISOString().split("T")[0],
-      time: new Date().toTimeString().split(" ")[0],
-      systolic: "",
-      diastolic: "",
-      glucose: "",
-      pulse: "",
-    });
+      // SÓ DEPOIS do sucesso, reseta o formulário
+      setFormData({
+        date: new Date().toISOString().split("T")[0],
+        time: new Date().toTimeString().split(" ")[0],
+        systolic: "",
+        diastolic: "",
+        glucose: "",
+        pulse: "",
+      });
 
-    // Feedback visual para o usuário
-    toast.success("Medição adicionada com sucesso!");
+      // MUDANÇA 4: O toast.success(...) FOI REMOVIDO DAQUI.
+      // O 'MeasurementContext' (chamado pelo 'onAdd')
+      // agora é o único responsável pelo toast de SUCESSO.
+
+    } catch (error) {
+      // O 'onAdd' (contexto) pode falhar
+      console.error("Erro ao adicionar medição:", error);
+      // O contexto já vai disparar um toast de erro de API.
+    }
   };
 
   return (
@@ -73,6 +81,7 @@ export const AddMeasurementForm = ({ onAdd }: AddMeasurementFormProps) => {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Plus className="w-5 h-5" />
+          {/* Correção de acento */}
           Nova Medição
         </CardTitle>
       </CardHeader>
