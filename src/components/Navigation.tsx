@@ -11,7 +11,7 @@ export const Navigation = () => {
   // 2. Atualizar a lista de itens de navegação
   const navItems = [
     // Link 'Home' agora é 'Dashboard'
-    { to: "/", icon: Home, label: "Dashboard" }, 
+    { to: "/", icon: Home, label: "Início" }, 
     // Novo link para a página /add
     { to: "/add", icon: Plus, label: "Adicionar" }, 
     // Links existentes com acentuação corrigida
