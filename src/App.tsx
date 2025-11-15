@@ -19,6 +19,10 @@ import Ajuda from "./pages/Ajuda";
 
 const queryClient = new QueryClient();
 
+// MUDANÇA: Obtém o caminho base da variável de ambiente
+// Se não estiver definida (ex: em dev), usa '/'
+const basename = import.meta.env.VITE_APP_BASE_PATH || '/';
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -26,7 +30,8 @@ const App = () => (
         <MeasurementProvider>
           <Toaster />
           <Sonner />
-          <BrowserRouter>
+          {/* MUDANÇA: Adiciona o basename ao BrowserRouter */}
+          <BrowserRouter basename={basename}>
             <Navigation />
             <Routes>
               {/* { Rotas atualizadas} */}
