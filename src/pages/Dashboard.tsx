@@ -1,6 +1,3 @@
-// src/pages/Dashboard.tsx
-
-
 // --- Imports Principais ---
 import { useState } from "react";
 import { Activity, Heart, Droplet, TrendingUp, BarChart3, Plus } from "lucide-react";
@@ -45,7 +42,6 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8 max-w-7xl">
-
         {/* === Cabeçalho da Página === */}
         <div className="mb-8">
           <h2 className="text-3xl font-bold text-foreground mb-2">Bem-vindo</h2>
@@ -57,9 +53,9 @@ const Dashboard = () => {
         {/* === Seção do Formulário Expansível === */}
         <div className="mt-10 space-y-4">
           <div className="flex items-center justify-between">
-
+            
             {/* Título clicável para expandir/recolher (Melhoria de UX) */}
-            <h3
+            <h3 
               className="text-2xl font-semibold flex items-center gap-2 cursor-pointer select-none"
               onClick={() => setShowForm(!showForm)}
               role="button"
