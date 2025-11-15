@@ -1,4 +1,8 @@
 // src/types/measurement.ts
+
+// -------------------------------------------------------
+// Estrutura usada SOMENTE no frontend
+// -------------------------------------------------------
 export interface Measurement {
   id: number;
   date: string;
@@ -9,6 +13,7 @@ export interface Measurement {
   pulse: number;
 }
 
+// Estatísticas (não usa ainda)
 export interface MeasurementStats {
   avgGlucose: number;
   avgSystolic: number;

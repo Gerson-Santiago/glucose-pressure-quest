@@ -1,27 +1,30 @@
 // src/pages/History.tsx
-import { MeasurementTable } from "@/components/MeasurementTable";
+
+/**
+ * Página que lista todas as medições do usuário.
+ * Permite visualizar histórico por ordem cronológica.
+ */
+
 import { useMeasurements } from "@/contexts/MeasurementContext";
-import { mapApiMeasurements } from "@/lib/measurementUtils";
 
 const History = () => {
-  const { measurements, deleteMeasurement } = useMeasurements();
-
-  // ✅ converte os dados da API para o tipo esperado pelo front
-  const frontMeasurements = mapApiMeasurements(measurements);
+  const { measurements } = useMeasurements();
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
-        <div className="mb-6">
-          <h2 className="text-3xl font-bold text-foreground mb-2">Histórico</h2>
-          <p className="text-muted-foreground">Todos os seus registros de medições</p>
-        </div>
+    <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <h2 className="text-3xl font-bold mb-6">Histórico Completo</h2>
 
-        <MeasurementTable 
-          measurements={[...frontMeasurements].reverse()} 
-          onDelete={deleteMeasurement}
-        />
-      </div>
+      <ul className="space-y-4">
+        {measurements.map((m) => (
+          <li key={m.id} className="p-4 border rounded-lg">
+            <p><strong>Data:</strong> {m.date}</p>
+            <p><strong>Hora:</strong> {m.time}</p>
+            <p><strong>Glicemia:</strong> {m.glucose} mg/dL</p>
+            <p><strong>Pressão:</strong> {m.systolic}/{m.diastolic}</p>
+            <p><strong>Pulso:</strong> {m.pulse} bpm</p>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };

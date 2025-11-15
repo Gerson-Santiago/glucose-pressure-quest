@@ -5,7 +5,7 @@ import { MetricCard } from "@/components/MetricCard";
 import { AddMeasurementForm } from "@/components/AddMeasurementForm";
 import { MeasurementChart } from "@/components/MeasurementChart";
 import { useMeasurements } from "@/contexts/MeasurementContext";
-import { calculateStats, getBloodPressureStatus, getGlucoseStatus, mapApiMeasurements } from "@/lib/measurementUtils";
+import { calculateStats, getBloodPressureStatus, getGlucoseStatus } from "@/lib/measurementUtils";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
@@ -13,16 +13,15 @@ const Index = () => {
   const { measurements, addMeasurement } = useMeasurements();
   const [showCharts, setShowCharts] = useState(false);
 
-  // ✅ converte para o tipo esperado pelo front
-  const frontMeasurements = mapApiMeasurements(measurements);
+  const frontMeasurements = measurements;
 
   const stats = calculateStats(frontMeasurements);
   const lastMeasurement = stats.lastMeasurement;
 
-  const bpStatus = lastMeasurement 
+  const bpStatus = lastMeasurement
     ? getBloodPressureStatus(lastMeasurement.systolic, lastMeasurement.diastolic)
     : null;
-  
+
   const glucoseStatus = lastMeasurement
     ? getGlucoseStatus(lastMeasurement.glucose)
     : null;
@@ -44,14 +43,14 @@ const Index = () => {
             value={lastMeasurement ? `${lastMeasurement.glucose} mg/dL` : "-"}
             subtitle={`Média: ${stats.avgGlucose} mg/dL`}
             icon={Droplet}
-            status={glucoseStatus ? { label: glucoseStatus.status, variant: glucoseStatus.variant } : undefined}
+            status={glucoseStatus ?? undefined}
           />
           <MetricCard
             title="Última Pressão Arterial"
             value={lastMeasurement ? `${lastMeasurement.systolic}/${lastMeasurement.diastolic}` : "-"}
             subtitle={`Média: ${stats.avgSystolic}/${stats.avgDiastolic} mmHg`}
             icon={Activity}
-            status={bpStatus ? { label: bpStatus.status, variant: bpStatus.variant } : undefined}
+            status={bpStatus ?? undefined}
           />
           <MetricCard
             title="Último Pulso"
@@ -85,7 +84,6 @@ const Index = () => {
             </Button>
           </div>
 
-          {/* Gráficos expansíveis */}
           {showCharts && (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-4">
               <MeasurementChart measurements={frontMeasurements} type="glucose" />
@@ -93,7 +91,6 @@ const Index = () => {
             </div>
           )}
 
-          {/* Link para a página completa */}
           <div className="text-center mt-4">
             <Link to="/charts">
               <Button variant="default">Ver gráficos completos</Button>

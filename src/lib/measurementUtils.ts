@@ -1,85 +1,141 @@
 // src/lib/measurementUtils.ts
-import { Measurement as ApiMeasurement } from "@/services/api";
-import { Measurement as FrontMeasurement, MeasurementStats } from "@/types/measurement";
 
-/** 🔄 Converte dados da API para o tipo usado nos componentes */
-export function mapApiMeasurements(apiMeasurements: ApiMeasurement[]): FrontMeasurement[] {
-  return apiMeasurements
-    .map((m, index) => ({
-      id: m.id ?? index + 1, // garante que exista id
-      date: m.date,
-      time: m.time,
-      systolic: m.systolic,
-      diastolic: m.diastolic,
-      glucose: m.glucose,
-      pulse: m.pulse,
-    }))
-    .sort((a, b) => new Date(`${a.date}T${a.time}`).getTime() - new Date(`${b.date}T${b.time}`).getTime());
+/**
+ * Tipagem das medições vindas do Supabase.
+ * (importada do serviço supabase)
+ */
+import { ApiMeasurement } from "@/services/supabase";
+
+/**
+ * Tipagem utilizada no frontend.
+ */
+import { Measurement as FrontMeasurement } from "@/types/measurement";
+
+
+// -------------------------------------------------------
+// Helpers
+// -------------------------------------------------------
+
+/**
+ * Garante que valores numéricos nulos retornem 0.
+ * Isso evita que o frontend quebre com undefined ou null.
+ */
+function safeNumber(value: number | null): number {
+  return value ?? 0;
 }
 
 
-/** 📊 Calcula médias e última medição */
-export const calculateStats = (measurements: FrontMeasurement[]): MeasurementStats => {
-  if (!measurements.length) {
+// -------------------------------------------------------
+// Conversão Supabase → Frontend
+// -------------------------------------------------------
+
+/**
+ * Converte uma lista de ApiMeasurement (Supabase)
+ * para Measurement (tipagem interna do app).
+ */
+export function mapApiMeasurements(apiList: ApiMeasurement[]): FrontMeasurement[] {
+  return apiList.map((m) => ({
+    id: m.id,
+    date: m.date,
+    time: m.time,
+    systolic: safeNumber(m.systolic),
+    diastolic: safeNumber(m.diastolic),
+    glucose: safeNumber(m.glucose),
+    pulse: safeNumber(m.pulse),
+  }));
+}
+
+
+// -------------------------------------------------------
+// Estatísticas das medições
+// -------------------------------------------------------
+
+/**
+ * Calcula estatísticas básicas das medições:
+ * última medição, médias, etc.
+ */
+export function calculateStats(list: FrontMeasurement[]) {
+  if (list.length === 0) {
     return {
+      lastMeasurement: null,
       avgGlucose: 0,
       avgSystolic: 0,
       avgDiastolic: 0,
       avgPulse: 0,
-      lastMeasurement: null,
     };
   }
 
-  const total = measurements.reduce(
-    (acc, m) => ({
-      glucose: acc.glucose + m.glucose,
-      systolic: acc.systolic + m.systolic,
-      diastolic: acc.diastolic + m.diastolic,
-      pulse: acc.pulse + m.pulse,
-    }),
-    { glucose: 0, systolic: 0, diastolic: 0, pulse: 0 }
-  );
+  const lastMeasurement = list[list.length - 1];
 
-  const count = measurements.length;
+  const avg = (arr: number[]) => arr.reduce((a, b) => a + b, 0) / arr.length;
 
   return {
-    avgGlucose: Math.round(total.glucose / count),
-    avgSystolic: Math.round(total.systolic / count),
-    avgDiastolic: Math.round(total.diastolic / count),
-    avgPulse: Math.round(total.pulse / count),
-    lastMeasurement: measurements[measurements.length - 1],
+    lastMeasurement,
+    avgGlucose: Math.round(avg(list.map((m) => m.glucose))),
+    avgSystolic: Math.round(avg(list.map((m) => m.systolic))),
+    avgDiastolic: Math.round(avg(list.map((m) => m.diastolic))),
+    avgPulse: Math.round(avg(list.map((m) => m.pulse))),
   };
-};
+}
 
-/** 🔔 Status da glicemia */
-export const getGlucoseStatus = (glucose: number) => {
-  if (glucose < 70) return { status: "Baixa", variant: "warning" as const };
-  if (glucose <= 99) return { status: "Normal", variant: "success" as const };
-  if (glucose <= 125) return { status: "Elevada", variant: "warning" as const };
-  return { status: "Alta", variant: "destructive" as const };
-};
+export type StatusVariant = "success" | "warning" | "destructive";
 
-/** 🔔 Status da pressão arterial */
-export const getBloodPressureStatus = (systolic: number, diastolic: number) => {
-  if (systolic < 120 && diastolic < 80) return { status: "Normal", variant: "success" as const };
-  if (systolic < 130 && diastolic < 80) return { status: "Elevada", variant: "warning" as const };
-  if (systolic < 140 || diastolic < 90) return { status: "Hipertensão Estágio 1", variant: "warning" as const };
-  return { status: "Hipertensão Estágio 2", variant: "destructive" as const };
-};
+export interface MeasurementStatus {
+  label: string;
+  variant: StatusVariant;
+}
+
+// -------------------------------------------------------
+// Status da pressão arterial
+// -------------------------------------------------------
+
+/**
+ * Retorna classificação da pressão arterial
+ * e um "variant" para estilizar visualmente.
+ */
+export function getBloodPressureStatus(
+  systolic: number,
+  diastolic: number
+): MeasurementStatus {
+
+  if (systolic < 120 && diastolic < 80) {
+    return { label: "Normal", variant: "success" };
+  }
+
+  if (systolic < 130 && diastolic < 80) {
+    return { label: "Elevada", variant: "warning" };
+  }
+
+  if (systolic < 140 || diastolic < 90) {
+    return { label: "Hipertensão Estágio 1", variant: "warning" };
+  }
+
+  return { label: "Hipertensão Estágio 2", variant: "destructive" };
+}
 
 
-// @excluir
-// /** 📄 Dados estáticos de exemplo (para dev/testes) */
-// export const parseMeasurements = (): FrontMeasurement[] => [
-//   { id: 1, date: "2025-11-06", time: "20:30:00", systolic: 146, diastolic: 107, glucose: 109, pulse: 74 },
-//   { id: 2, date: "2025-11-07", time: "05:40:00", systolic: 132, diastolic: 85, glucose: 97, pulse: 55 },
-//   { id: 3, date: "2025-11-07", time: "23:07:00", systolic: 155, diastolic: 94, glucose: 114, pulse: 85 },
-//   { id: 4, date: "2025-11-08", time: "06:26:00", systolic: 131, diastolic: 93, glucose: 93, pulse: 81 },
-//   { id: 5, date: "2025-11-08", time: "22:30:00", systolic: 140, diastolic: 91, glucose: 106, pulse: 72 },
-//   { id: 6, date: "2025-11-09", time: "07:27:00", systolic: 139, diastolic: 80, glucose: 118, pulse: 67 },
-//   { id: 7, date: "2025-11-10", time: "07:32:00", systolic: 125, diastolic: 83, glucose: 110, pulse: 68 },
-//   { id: 8, date: "2025-11-10", time: "20:52:00", systolic: 138, diastolic: 89, glucose: 132, pulse: 82 },
-//   { id: 9, date: "2025-11-11", time: "07:30:00", systolic: 135, diastolic: 89, glucose: 83, pulse: 61 },
-//   { id: 10, date: "2025-11-11", time: "21:44:00", systolic: 137, diastolic: 90, glucose: 106, pulse: 69 },
-//   { id: 11, date: "2025-11-12", time: "06:16:00", systolic: 137, diastolic: 98, glucose: 104, pulse: 52 },
-// ];
+
+// -------------------------------------------------------
+// Status da glicemia
+// -------------------------------------------------------
+
+/**
+ * Retorna classificação da glicemia
+ * e um "variant" para estilizar visualmente.
+ */
+export function getGlucoseStatus(glucose: number): MeasurementStatus {
+  if (glucose < 70) {
+    return { label: "Hipoglicemia", variant: "destructive" };
+  }
+
+  if (glucose <= 99) {
+    return { label: "Normal", variant: "success" };
+  }
+
+  if (glucose <= 125) {
+    return { label: "Pré-diabetes", variant: "warning" };
+  }
+
+  return { label: "Diabetes", variant: "destructive" };
+}
+

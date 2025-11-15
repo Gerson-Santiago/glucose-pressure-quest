@@ -1,84 +1,123 @@
 // src/contexts/MeasurementContext.tsx
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+
+/**
+ * Contexto global responsável por:
+ * - carregar medições do Supabase
+ * - adicionar novas medições
+ * - soft delete
+ * - manter estado sincronizado com Supabase
+ */
+
 import {
-  Measurement as ApiMeasurement,
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
+
+import {
+  ApiMeasurement,
   getMeasurements,
   addMeasurement as addRemote,
   deleteMeasurement as deleteRemote,
   ApiResponse,
-} from "@/services/api";
+} from "@/services/supabase";
+
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+
 import { mapApiMeasurements } from "@/lib/measurementUtils";
 import { Measurement as FrontMeasurement } from "@/types/measurement";
 
+
+// -------------------------------------------------------
+// Tipagem do Provider
+// -------------------------------------------------------
+
 interface MeasurementContextType {
   measurements: FrontMeasurement[];
-  addMeasurement: (measurement: Omit<FrontMeasurement, "id">) => Promise<void>;
+  addMeasurement: (m: Omit<FrontMeasurement, "id">) => Promise<void>;
   deleteMeasurement: (id: number) => Promise<void>;
 }
 
-const MeasurementContext = createContext<MeasurementContextType | undefined>(undefined);
+const MeasurementContext = createContext<MeasurementContextType | undefined>(
+  undefined
+);
+
+
+// -------------------------------------------------------
+// Provider principal
+// -------------------------------------------------------
 
 export const MeasurementProvider = ({ children }: { children: ReactNode }) => {
   const [measurements, setMeasurements] = useState<FrontMeasurement[]>([]);
 
-  // 🔄 Carrega medições da API (GET)
+  /**
+   * Carrega medições assim que o app é iniciado.
+   */
   useEffect(() => {
     (async () => {
       try {
         const data: ApiMeasurement[] = await getMeasurements();
         setMeasurements(mapApiMeasurements(data));
       } catch (err) {
-        console.error("Erro ao buscar medições:", err);
-        toast.error("Não foi possível conectar à planilha Google.");
+        console.error("Erro ao carregar medições:", err);
+        toast.error("Falha ao carregar medições do servidor.");
       }
     })();
   }, []);
 
-  // ➕ Adiciona nova medição (POST)
-  const addMeasurement = async (newMeasurement: Omit<FrontMeasurement, "id">): Promise<void> => {
+  // -------------------------------------------------------
+  // Adicionar medição
+  // -------------------------------------------------------
+
+  const addMeasurement = async (
+    newMeasurement: Omit<FrontMeasurement, "id">
+  ) => {
     try {
-      console.log("Enviando medição:", newMeasurement);
+      const payload = {
+        ...newMeasurement,
+        deleted_at: null,
+        deleted_by_source: null,
+      };
 
-      const res: ApiResponse = await addRemote(newMeasurement);
-
-      console.log("Resposta da API:", res);
+      const res: ApiResponse = await addRemote(payload);
 
       if (res?.success) {
-        toast.success("Medição salva com sucesso!");
-
-        // Atualiza lista local pegando dados da API
-        const updated: ApiMeasurement[] = await getMeasurements();
+        toast.success("Medição salva!");
+        const updated = await getMeasurements();
         setMeasurements(mapApiMeasurements(updated));
       } else {
-        toast.error(res.error || "Falha ao adicionar medição.");
+        toast.error(res.error || "Erro ao salvar medição.");
       }
     } catch (err) {
-      console.error("Erro ao adicionar medição:", err);
-      toast.error("Erro ao conectar à API de medições.");
+      console.error("Erro ao salvar medição:", err);
+      toast.error("Falha ao conectar à API.");
     }
   };
 
-  // 🗑️ Exclui medição (DELETE via POST)
-  const deleteMeasurement = async (id: number): Promise<void> => {
-    const deletedMeasurement = measurements.find(m => m.id === id);
+  // -------------------------------------------------------
+  // Soft delete
+  // -------------------------------------------------------
+
+  const deleteMeasurement = async (id: number) => {
+    const deletedMeasurement = measurements.find((m) => m.id === id);
     if (!deletedMeasurement) return;
 
-    // Remove localmente imediatamente
-    setMeasurements(measurements.filter(m => m.id !== id));
+    setMeasurements(measurements.filter((m) => m.id !== id));
 
-    toast("Medição excluída", {
+    toast("Medição removida", {
       description: "Removida do histórico local.",
       action: (
         <Button
           variant="outline"
           size="sm"
           onClick={() => {
-            setMeasurements(prev =>
-              [...prev, deletedMeasurement].sort((a, b) => (a.id ?? 0) - (b.id ?? 0))
+            setMeasurements((prev) =>
+              [...prev, deletedMeasurement].sort((a, b) => a.id! - b.id!)
             );
-            toast.info("Medição restaurada localmente (não reenviada à planilha).");
+            toast.info("Medição restaurada.");
           }}
         >
           Desfazer
@@ -87,35 +126,40 @@ export const MeasurementProvider = ({ children }: { children: ReactNode }) => {
     });
 
     try {
-      const res: ApiResponse = await deleteRemote(id);
-      console.log("Resposta do DELETE:", res);
+      const res = await deleteRemote(id);
 
       if (!res?.success) {
-        toast.error(res.error || "Erro ao excluir da planilha.");
-        // Reverte exclusão local se falhar
-        setMeasurements(prev =>
-          [...prev, deletedMeasurement].sort((a, b) => (a.id ?? 0) - (b.id ?? 0))
+        toast.error(res.error || "Erro no servidor.");
+        setMeasurements((prev) =>
+          [...prev, deletedMeasurement].sort((a, b) => a.id! - b.id!)
         );
       }
     } catch (err) {
-      console.error("Erro ao deletar medição:", err);
-      toast.error("Falha de conexão ao excluir medição.");
-      setMeasurements(prev =>
-        [...prev, deletedMeasurement].sort((a, b) => (a.id ?? 0) - (b.id ?? 0))
+      console.error("Erro ao excluir:", err);
+      toast.error("Falha de conexão ao excluir.");
+      setMeasurements((prev) =>
+        [...prev, deletedMeasurement].sort((a, b) => a.id! - b.id!)
       );
     }
   };
 
   return (
-    <MeasurementContext.Provider value={{ measurements, addMeasurement, deleteMeasurement }}>
+    <MeasurementContext.Provider
+      value={{ measurements, addMeasurement, deleteMeasurement }}
+    >
       {children}
     </MeasurementContext.Provider>
   );
 };
 
-// Hook para uso do contexto
+
+// -------------------------------------------------------
+// Hook para acesso rápido
+// -------------------------------------------------------
+
 export const useMeasurements = () => {
-  const context = useContext(MeasurementContext);
-  if (!context) throw new Error("useMeasurements deve ser usado dentro de MeasurementProvider");
-  return context;
+  const ctx = useContext(MeasurementContext);
+  if (!ctx)
+    throw new Error("useMeasurements deve ser usado dentro do Provider");
+  return ctx;
 };

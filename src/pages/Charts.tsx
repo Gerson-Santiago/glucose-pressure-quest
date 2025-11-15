@@ -1,25 +1,25 @@
 // src/pages/Charts.tsx
-import { mapApiMeasurements } from "@/lib/measurementUtils";
-import { getMeasurements } from "@/services/api";
-import { useEffect, useState } from "react";
+
+/**
+ * Página que exibe gráficos completos de glicemia e pressão.
+ */
+
 import { MeasurementChart } from "@/components/MeasurementChart";
-import { Measurement as FrontMeasurement } from "@/types/measurement";
+import { useMeasurements } from "@/contexts/MeasurementContext";
 
-export default function Charts() {
-  const [measurements, setMeasurements] = useState<FrontMeasurement[]>([]);
-
-  useEffect(() => {
-    (async () => {
-      const apiData = await getMeasurements();       // retorna Measurement[] da API
-      const mapped = mapApiMeasurements(apiData);    // transforma para FrontMeasurement[]
-      setMeasurements(mapped);
-    })();
-  }, []);
+const Charts = () => {
+  const { measurements } = useMeasurements();
 
   return (
-    <div className="space-y-6">
-      <MeasurementChart measurements={measurements} type="glucose" />
-      <MeasurementChart measurements={measurements} type="pressure" />
+    <div className="container mx-auto px-4 py-8 max-w-5xl">
+      <h2 className="text-3xl font-bold mb-6">Gráficos Completos</h2>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <MeasurementChart measurements={measurements} type="glucose" />
+        <MeasurementChart measurements={measurements} type="pressure" />
+      </div>
     </div>
   );
-}
+};
+
+export default Charts;
