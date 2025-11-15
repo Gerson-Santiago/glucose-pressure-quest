@@ -1,3 +1,4 @@
+// src/components/MeasurementChart.tsx
 import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis, Legend, CartesianGrid } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Measurement } from "@/types/measurement";

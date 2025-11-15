@@ -1,3 +1,4 @@
+// src/components/MeasurementTable.tsx
 import {
   Table,
   TableBody,
@@ -13,6 +14,7 @@ import { Trash2 } from "lucide-react";
 import { Measurement } from "@/types/measurement";
 import { getBloodPressureStatus, getGlucoseStatus } from "@/lib/measurementUtils";
 import { useSettings } from "@/contexts/SettingsContext";
+import { formatDate, formatTime } from "@/lib/date";
 
 interface MeasurementTableProps {
   measurements: Measurement[];
@@ -21,7 +23,7 @@ interface MeasurementTableProps {
 
 export const MeasurementTable = ({ measurements, onDelete }: MeasurementTableProps) => {
   const { showStatus, showDeleteButtons } = useSettings();
-  
+
   return (
     <Card>
       <CardHeader>
@@ -45,11 +47,11 @@ export const MeasurementTable = ({ measurements, onDelete }: MeasurementTablePro
               {measurements.map((measurement) => {
                 const bpStatus = getBloodPressureStatus(measurement.systolic, measurement.diastolic);
                 const glucoseStatus = getGlucoseStatus(measurement.glucose);
-                
+
                 return (
                   <TableRow key={measurement.id}>
-                    <TableCell className="font-medium">{measurement.date}</TableCell>
-                    <TableCell>{measurement.time}</TableCell>
+                    <TableCell className="font-medium">{formatDate(measurement.date)}</TableCell>
+                    <TableCell>{formatTime(measurement.time)}</TableCell>
                     <TableCell>
                       {measurement.systolic}/{measurement.diastolic}
                     </TableCell>
@@ -58,11 +60,11 @@ export const MeasurementTable = ({ measurements, onDelete }: MeasurementTablePro
                     {showStatus && (
                       <TableCell>
                         <div className="flex gap-1 flex-wrap">
-                          <Badge variant={bpStatus.variant} className="text-xs">
-                            PA: {bpStatus.status}
+                          <Badge variant={bpStatus.variant} className="text-xs px-1 py-0.5">
+                            PA: {bpStatus.label}
                           </Badge>
-                          <Badge variant={glucoseStatus.variant} className="text-xs">
-                            Gli: {glucoseStatus.status}
+                          <Badge variant={glucoseStatus.variant} className="text-xs px-1 py-0.5">
+                            Gli: {glucoseStatus.label}
                           </Badge>
                         </div>
                       </TableCell>
