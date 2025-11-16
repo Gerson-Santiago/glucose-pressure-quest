@@ -17,14 +17,43 @@ const Settings = () => {
     toggleShowDeleteButtons,
     setGoogleSheetUrl 
   } = useSettings();
-  
+  const { 
+    showChartGuides,
+    toggleShowChartGuides,
+    glucoseGuideValue,
+    setGlucoseGuideValue,
+    pressureLowValue,
+    setPressureLowValue,
+    pressureHighValue,
+    setPressureHighValue,
+  } = useSettings();
+
   const [sheetUrl, setSheetUrl] = useState(googleSheetUrl);
+
+  // Local state for chart guide inputs
+  const [localShowChartGuides, setLocalShowChartGuides] = useState(showChartGuides);
+  const [localGlucoseGuide, setLocalGlucoseGuide] = useState<number>(glucoseGuideValue);
+  const [localPressureLow, setLocalPressureLow] = useState<number>(pressureLowValue);
+  const [localPressureHigh, setLocalPressureHigh] = useState<number>(pressureHighValue);
 
   const handleSaveSheetUrl = () => {
     setGoogleSheetUrl(sheetUrl);
     toast({
       title: "Configurações salvas",
       description: "URL da planilha atualizada com sucesso",
+    });
+  };
+
+  const handleSaveChartSettings = () => {
+    // apply toggles and numeric values to context
+    if (localShowChartGuides !== showChartGuides) toggleShowChartGuides();
+    setGlucoseGuideValue(Number(localGlucoseGuide));
+    setPressureLowValue(Number(localPressureLow));
+    setPressureHighValue(Number(localPressureHigh));
+
+    toast({
+      title: "Configurações salvas",
+      description: "Configurações dos gráficos atualizadas",
     });
   };
 
@@ -71,6 +100,64 @@ const Settings = () => {
                   checked={showDeleteButtons}
                   onCheckedChange={toggleShowDeleteButtons}
                 />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Guias dos Gráficos</CardTitle>
+              <CardDescription>
+                Ligue/desligue as linhas de referência e ajuste os valores
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="show-chart-guides" className="flex flex-col gap-1">
+                  <span>Mostrar linhas guias nos gráficos</span>
+                  <span className="font-normal text-sm text-muted-foreground">
+                    Exibe linhas horizontais de referência nos gráficos
+                  </span>
+                </Label>
+                <Switch
+                  id="show-chart-guides"
+                  checked={localShowChartGuides}
+                  onCheckedChange={(v) => setLocalShowChartGuides(Boolean(v))}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <Label htmlFor="glucose-guide">Glicemia (valor)</Label>
+                  <Input
+                    id="glucose-guide"
+                    type="number"
+                    value={localGlucoseGuide}
+                    onChange={(e) => setLocalGlucoseGuide(Number(e.target.value))}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="pressure-low">Pressão mínima (valor)</Label>
+                  <Input
+                    id="pressure-low"
+                    type="number"
+                    value={localPressureLow}
+                    onChange={(e) => setLocalPressureLow(Number(e.target.value))}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="pressure-high">Pressão máxima (valor)</Label>
+                  <Input
+                    id="pressure-high"
+                    type="number"
+                    value={localPressureHigh}
+                    onChange={(e) => setLocalPressureHigh(Number(e.target.value))}
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-end">
+                <Button onClick={handleSaveChartSettings}>Salvar Configurações de Gráficos</Button>
               </div>
             </CardContent>
           </Card>
