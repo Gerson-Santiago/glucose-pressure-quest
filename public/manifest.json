@@ -35,7 +35,7 @@
             "name": "Adicionar medição",
             "short_name": "Adicionar",
             "description": "Registrar nova medição de glicose ou pressão",
-            "url": "/add-measurement",
+            "url": "/add",
             "icons": [{ "src": "/icon-192x192.png", "sizes": "192x192" }]
         }
     ]
