@@ -24,6 +24,23 @@ function safeNumber(value: number | null): number {
   return value ?? 0;
 }
 
+/**
+ * Classifica a medição como 'Manhã' ou 'Noite'.
+ * Manhã: 05:00:00 até 11:59:59
+ * Noite: 12:00:00 até 04:59:59 (da manhã)
+ */
+function getClassificationTime(timeString: string): 'Manhã' | 'Noite' {
+  // A string de hora vem como "HH:MM:SS" (ex: "07:30:00" ou "22:30:00")
+  const hour = parseInt(timeString.slice(0, 2), 10);
+  
+  // Regra: Entre 5 da manhã (inclusive) e 12 da manhã (exclusivo)
+  if (hour >= 5 && hour < 12) {
+    return 'Manhã';
+  }
+  
+  return 'Noite';
+}
+
 
 // -------------------------------------------------------
 // Conversão Supabase → Frontend
@@ -31,7 +48,7 @@ function safeNumber(value: number | null): number {
 
 /**
  * Converte uma lista de ApiMeasurement (Supabase)
- * para Measurement (tipagem interna do app).
+ * para Measurement (tipagem interna do app), adicionando a classificação de período.
  */
 export function mapApiMeasurements(apiList: ApiMeasurement[]): FrontMeasurement[] {
   return apiList.map((m) => ({
@@ -42,6 +59,8 @@ export function mapApiMeasurements(apiList: ApiMeasurement[]): FrontMeasurement[
     diastolic: safeNumber(m.diastolic),
     glucose: safeNumber(m.glucose),
     pulse: safeNumber(m.pulse),
+    // MUDANÇA: Preenche o novo campo 'period'
+    period: getClassificationTime(m.time),
   }));
 }
 
@@ -138,4 +157,3 @@ export function getGlucoseStatus(glucose: number): MeasurementStatus {
 
   return { label: "Diabetes", variant: "destructive" };
 }
-

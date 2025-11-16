@@ -1,27 +1,41 @@
-// src/components/MeasurementChart.tsx
 import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis, Legend, CartesianGrid } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Measurement } from "@/types/measurement";
 
+// MUDANÇA 1: Adicionar a prop titlePrefix
 interface MeasurementChartProps {
   measurements: Measurement[];
   type: "glucose" | "pressure";
+  titlePrefix?: string; // NOVO: Usado para distinguir os gráficos (ex: "Glicemia")
 }
 
-export const MeasurementChart = ({ measurements, type }: MeasurementChartProps) => {
+export const MeasurementChart = ({ measurements, type, titlePrefix }: MeasurementChartProps) => {
+  
+  // A lógica de mapeamento de dados permanece a sua (corrigida)
   const data = measurements.map((m) => ({
-    date: `${m.date.slice(0, 5)}`,
+    date: `${m.date.slice(8, 10)}-${m.date.slice(5, 7)}`, // DD-MM
+
+    // CORREÇÃO: Acentuação correta ('Sistólica', 'Diastólica')
     ...(type === "glucose"
       ? { Glicemia: m.glucose }
       : { Sistólica: m.systolic, Diastólica: m.diastolic }),
   }));
 
-  const title = type === "glucose" ? "Glicemia ao Longo do Tempo" : "Pressão Arterial ao Longo do Tempo";
+  // MUDANÇA 2: Usar o titlePrefix no título
+  let baseTitle = "";
+  if (type === "glucose") {
+    baseTitle = "Glicemia ao Longo do Tempo";
+  } else {
+    baseTitle = "Pressão Arterial ao Longo do Tempo";
+  }
+
+  // Se houver um prefixo (como "Glicemia" na seção "Tendência Geral"), use-o
+  const finalTitle = titlePrefix ? `${titlePrefix} | ${baseTitle}` : baseTitle;
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{title}</CardTitle>
+        <CardTitle>{finalTitle}</CardTitle>
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={300}>
@@ -56,14 +70,14 @@ export const MeasurementChart = ({ measurements, type }: MeasurementChartProps) 
               <>
                 <Line
                   type="monotone"
-                  dataKey="Sistólica"
+                  dataKey="Sistólica" // CORRIGIDO
                   stroke="hsl(var(--chart-1))"
                   strokeWidth={2}
                   dot={{ fill: "hsl(var(--chart-1))", r: 4 }}
                 />
                 <Line
                   type="monotone"
-                  dataKey="Diastólica"
+                  dataKey="Diastólica" // CORRIGIDO
                   stroke="hsl(var(--chart-3))"
                   strokeWidth={2}
                   dot={{ fill: "hsl(var(--chart-3))", r: 4 }}

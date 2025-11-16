@@ -11,6 +11,7 @@ export interface Measurement {
   diastolic: number;
   glucose: number;
   pulse: number;
+  period: 'Manhã' | 'Noite';
 }
 
 // Estatísticas (não usa ainda)
