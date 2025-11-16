@@ -1,6 +1,9 @@
 import { MeasurementChart } from "@/components/MeasurementChart";
 import { useMeasurements } from "@/contexts/MeasurementContext";
 import { Droplet, Activity, Sun, Moon } from "lucide-react"; // Adicionando Sun e Moon
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { useSettings } from "@/contexts/SettingsContext";
 
 /**
  * Página que exibe gráficos completos de glicemia e pressão,
@@ -8,6 +11,8 @@ import { Droplet, Activity, Sun, Moon } from "lucide-react"; // Adicionando Sun 
  */
 const Charts = () => {
   const { measurements } = useMeasurements();
+
+  const { showChartGuides, toggleShowChartGuides } = useSettings();
 
   // 1. Filtragem por Período
   // O campo 'period' já está preenchido pelo measurementUtils.ts
@@ -20,10 +25,22 @@ const Charts = () => {
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
-      <h1 className="text-3xl font-bold mb-2">Análise de Dados</h1>
-      <p className="text-muted-foreground mb-6">
-        Visualização de tendência geral e comparativo por período do dia.
-      </p>
+      <div className="mb-2 flex items-start justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">Análise de Dados</h1>
+          <p className="text-muted-foreground mt-1">
+            Visualização de tendência geral e comparativo por período do dia.
+          </p>
+        </div>
+        <div className="flex items-center gap-4">
+          <Label className="text-sm">Linhas guias</Label>
+          <Switch
+            id="toggle-guides-top"
+            checked={showChartGuides}
+            onCheckedChange={toggleShowChartGuides}
+          />
+        </div>
+      </div>
 
       {/* Mensagem de Estado Vazio */}
       {!hasAnyData && (

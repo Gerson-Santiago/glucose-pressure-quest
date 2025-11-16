@@ -30,8 +30,7 @@ const Settings = () => {
 
   const [sheetUrl, setSheetUrl] = useState(googleSheetUrl);
 
-  // Local state for chart guide inputs
-  const [localShowChartGuides, setLocalShowChartGuides] = useState(showChartGuides);
+  // Local state for chart guide inputs (numbers only). Switch updates global immediately.
   const [localGlucoseGuide, setLocalGlucoseGuide] = useState<number>(glucoseGuideValue);
   const [localPressureLow, setLocalPressureLow] = useState<number>(pressureLowValue);
   const [localPressureHigh, setLocalPressureHigh] = useState<number>(pressureHighValue);
@@ -46,7 +45,6 @@ const Settings = () => {
 
   const handleSaveChartSettings = () => {
     // apply toggles and numeric values to context
-    if (localShowChartGuides !== showChartGuides) toggleShowChartGuides();
     setGlucoseGuideValue(Number(localGlucoseGuide));
     setPressureLowValue(Number(localPressureLow));
     setPressureHighValue(Number(localPressureHigh));
@@ -121,8 +119,8 @@ const Settings = () => {
                 </Label>
                 <Switch
                   id="show-chart-guides"
-                  checked={localShowChartGuides}
-                  onCheckedChange={(v) => setLocalShowChartGuides(Boolean(v))}
+                  checked={showChartGuides}
+                  onCheckedChange={() => toggleShowChartGuides()}
                 />
               </div>
 

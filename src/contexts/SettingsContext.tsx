@@ -52,9 +52,9 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
   const [showChartGuides, setShowChartGuides] = useState(() => {
     const stored = localStorage.getItem(SETTINGS_KEY);
     if (stored) {
-      return JSON.parse(stored).showChartGuides ?? true;
+      return JSON.parse(stored).showChartGuides ?? false;
     }
-    return true;
+    return false;
   });
 
   const [glucoseGuideValue, setGlucoseGuideValueState] = useState<number>(() => {
