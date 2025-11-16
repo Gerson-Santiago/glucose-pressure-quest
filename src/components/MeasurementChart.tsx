@@ -1,4 +1,4 @@
-import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis, Legend, CartesianGrid } from "recharts";
+import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis, Legend, CartesianGrid, ReferenceLine } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Measurement } from "@/types/measurement";
 
@@ -84,6 +84,34 @@ export const MeasurementChart = ({ measurements, type, titlePrefix }: Measuremen
                 />
               </>
             )}
+              {/* Linhas de referência: glicemia = 100 (vermelha); pressão = 80 e 120 (verdes) */}
+              {type === "glucose" && (
+                <ReferenceLine
+                  y={100}
+                  stroke="#e11d48" /* vermelho */
+                  strokeWidth={2}
+                  strokeDasharray="4 4"
+                  label={{ position: "right", value: "100", fill: "#e11d48" }}
+                />
+              )}
+              {type === "pressure" && (
+                <>
+                  <ReferenceLine
+                    y={80}
+                    stroke="#16a34a" /* verde */
+                    strokeWidth={2}
+                    strokeDasharray="4 4"
+                    label={{ position: "right", value: "80", fill: "#16a34a" }}
+                  />
+                  <ReferenceLine
+                    y={120}
+                    stroke="#16a34a" /* verde */
+                    strokeWidth={2}
+                    strokeDasharray="4 4"
+                    label={{ position: "right", value: "120", fill: "#16a34a" }}
+                  />
+                </>
+              )}
           </LineChart>
         </ResponsiveContainer>
       </CardContent>
