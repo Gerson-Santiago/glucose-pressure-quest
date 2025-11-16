@@ -1,6 +1,7 @@
+// src/pages/Charts.tsx
 import { MeasurementChart } from "@/components/MeasurementChart";
 import { useMeasurements } from "@/contexts/MeasurementContext";
-import { Droplet, Activity, Sun, Moon } from "lucide-react"; // Adicionando Sun e Moon
+import { Activity, Sun, Moon } from "lucide-react"; // Adicionando Sun e Moon
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useSettings } from "@/contexts/SettingsContext";
