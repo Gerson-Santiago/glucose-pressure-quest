@@ -4,6 +4,9 @@ import { Button } from "@/components/ui/button";
 import { FileDown, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
+// MUDANÇA 1: Importar a nova função de timestamp
+import { getFormattedTimestamp } from "@/lib/date";
+
 // Declara as bibliotecas globais (do index.html) para o TypeScript
 declare const html2canvas: any;
 declare const jspdf: any;
@@ -16,7 +19,6 @@ export const ReportButton = ({ targetId }: ReportButtonProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleDownloadPdf = async () => {
-    // 1. Encontra o elemento da tabela no DOM
     const input = document.getElementById(targetId);
     if (!input) {
       toast.error("Erro: Não foi possível encontrar a tabela para imprimir.");
@@ -26,41 +28,39 @@ export const ReportButton = ({ targetId }: ReportButtonProps) => {
     setIsLoading(true);
 
     try {
-      // 2. Usa 'html2canvas' para "tirar uma foto" da tabela
       const canvas = await html2canvas(input, {
-        scale: 2, // Aumenta a resolução para melhor qualidade
+        scale: 2, 
         useCORS: true,
+        backgroundColor: null, 
       });
       
       const imgData = canvas.toDataURL('image/png');
 
-      // 3. Usa 'jsPDF' para criar o documento
-      // 'p' = retrato (portrait), 'mm' = milímetros, 'a4' = tamanho da página
       const { jsPDF } = jspdf;
       const pdf = new jsPDF('p', 'mm', 'a4');
       
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = pdf.internal.pageSize.getHeight();
-      
       const imgWidth = canvas.width;
       const imgHeight = canvas.height;
       
-      // Calcula a proporção para caber na página A4
       const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
       const imgX = (pdfWidth - imgWidth * ratio) / 2;
-      const imgY = 30; // Margem superior para o título
+      const imgY = 30; 
 
-      // 4. Adiciona Título e Data ao PDF
       pdf.setFontSize(20);
       pdf.text("Relatório de Medições", pdfWidth / 2, 15, { align: "center" });
+      
+      // MUDANÇA 2: Usar a função de timestamp centralizada (CORRIGE O BUG DO FUSO)
+      const timestamp = getFormattedTimestamp(); // Ex: "16/11/2025 às 22:30:15"
       pdf.setFontSize(10);
-      pdf.text(`Gerado em: ${new Date().toLocaleDateString('pt-BR')} ${new Date().toLocaleTimeString('pt-BR')}`, pdfWidth / 2, 22, { align: "center" });
+      pdf.text(`Gerado em: ${timestamp}`, pdfWidth / 2, 22, { align: "center" });
 
-      // 5. Adiciona a "foto" da tabela ao PDF
       pdf.addImage(imgData, 'PNG', imgX, imgY, imgWidth * ratio, imgHeight * ratio);
       
-      // 6. Baixa o arquivo
-      pdf.save(`relatorio_saude_${new Date().toISOString().split('T')[0]}.pdf`);
+      // MUDANÇA 3: Corrigir o nome do arquivo para usar a data local
+      const localDateString = new Date().toLocaleDateString('sv-SE'); // "2025-11-16"
+      pdf.save(`relatorio_saude_${localDateString}.pdf`);
 
     } catch (error) {
       console.error("Erro ao gerar PDF:", error);
@@ -76,6 +76,7 @@ export const ReportButton = ({ targetId }: ReportButtonProps) => {
       size="sm"
       onClick={handleDownloadPdf}
       disabled={isLoading}
+      className="print:hidden" 
     >
       {isLoading ? (
         <Loader2 className="h-4 w-4 mr-2 animate-spin" />
