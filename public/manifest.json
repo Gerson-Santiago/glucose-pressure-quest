@@ -9,7 +9,10 @@
     "background_color": "#ffffff",
     "theme_color": "#007bff",
     "orientation": "portrait-or-landscape",
-    "categories": ["health", "fitness"],
+    "categories": [
+        "health",
+        "fitness"
+    ],
     "icons": [
         {
             "src": "/placeholder.svg",
@@ -36,7 +39,12 @@
             "short_name": "Adicionar",
             "description": "Registrar nova medição de glicose ou pressão",
             "url": "/add",
-            "icons": [{ "src": "/icon-192x192.png", "sizes": "192x192" }]
+            "icons": [
+                {
+                    "src": "/icon-192x192.png",
+                    "sizes": "192x192"
+                }
+            ]
         }
     ]
 }
