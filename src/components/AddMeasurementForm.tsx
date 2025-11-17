@@ -4,11 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { toast } from "sonner"; // 'toast.error' ainda é usado para validação
+import { toast } from "sonner";
 import { Plus } from "lucide-react";
 
+// MUDANÇA 1: Importar as novas funções centrais de date.ts
+import { getLocalDateISO, getLocalTimeISO } from "@/lib/date";
+
 interface AddMeasurementFormProps {
-  // MUDANÇA 1: A prop onAdd agora pode ser assíncrona
   onAdd: (measurement: {
     date: string;
     time: string;
@@ -16,34 +18,33 @@ interface AddMeasurementFormProps {
     diastolic: number;
     glucose: number;
     pulse: number;
-  }) => Promise<void> | void; // Permite onAdd ser async
+  }) => Promise<void> | void;
 }
 
 export const AddMeasurementForm = ({ onAdd }: AddMeasurementFormProps) => {
-  // Estado do formulário
+
+  // MUDANÇA 2: Usar as funções importadas para o estado inicial
   const [formData, setFormData] = useState({
-    date: new Date().toISOString().split("T")[0], // YYYY-MM-DD
-    time: new Date().toTimeString().split(" ")[0], // HH:MM:SS
+    date: getLocalDateISO(), // <-- Usa a função central
+    time: getLocalTimeISO(), // <-- Usa a função central
     systolic: "",
     diastolic: "",
     glucose: "",
     pulse: "",
   });
 
-  // MUDANÇA 2: A função de envio agora é 'async'
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validação básica de preenchimento (sem mudança)
     if (!formData.systolic || !formData.diastolic || !formData.glucose || !formData.pulse) {
       toast.error("Por favor, preencha todos os campos");
       return;
     }
 
-    // Preparando payload (sem mudança)
     const newMeasurement = {
-      date: new Date(formData.date).toISOString().split("T")[0], // YYYY-MM-DD
-      time: formData.time.length === 5 ? formData.time + ":00" : formData.time, // HH:MM:SS
+      // MUDANÇA 3: Usar a função central para garantir o formato local
+      date: new Date(formData.date).toLocaleDateString('sv-SE'),
+      time: formData.time.length === 5 ? formData.time + ":00" : formData.time,
       systolic: parseInt(formData.systolic),
       diastolic: parseInt(formData.diastolic),
       glucose: parseInt(formData.glucose),
@@ -53,27 +54,20 @@ export const AddMeasurementForm = ({ onAdd }: AddMeasurementFormProps) => {
     console.log("Payload enviado:", newMeasurement);
 
     try {
-      // MUDANÇA 3: Chamamos o 'onAdd' (do contexto) e 'await' (esperamos)
       await onAdd(newMeasurement);
 
-      // SÓ DEPOIS do sucesso, reseta o formulário
+      // Reseta o formulário
       setFormData({
-        date: new Date().toISOString().split("T")[0],
-        time: new Date().toTimeString().split(" ")[0],
+        date: getLocalDateISO(), // <-- Usa a função central
+        time: getLocalTimeISO(), // <-- Usa a função central
         systolic: "",
         diastolic: "",
         glucose: "",
         pulse: "",
       });
 
-      // MUDANÇA 4: O toast.success(...) FOI REMOVIDO DAQUI.
-      // O 'MeasurementContext' (chamado pelo 'onAdd')
-      // agora é o único responsável pelo toast de SUCESSO.
-
     } catch (error) {
-      // O 'onAdd' (contexto) pode falhar
       console.error("Erro ao adicionar medição:", error);
-      // O contexto já vai disparar um toast de erro de API.
     }
   };
 
@@ -82,7 +76,6 @@ export const AddMeasurementForm = ({ onAdd }: AddMeasurementFormProps) => {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Plus className="w-5 h-5" />
-          {/* Correção de acento */}
           Nova Medição
         </CardTitle>
       </CardHeader>
@@ -104,7 +97,7 @@ export const AddMeasurementForm = ({ onAdd }: AddMeasurementFormProps) => {
               <Input
                 id="time"
                 type="time"
-                value={formData.time.slice(0, 5)} // mantém apenas HH:MM
+                value={formData.time.slice(0, 5)}
                 onChange={(e) => setFormData({ ...formData, time: e.target.value })}
               />
             </div>
