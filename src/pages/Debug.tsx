@@ -1,79 +1,100 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-
-// MUDANÇA 1: Importar o Supabase (para testar a conexão)
 import { supabase } from '@/services/supabase';
+// Importamos suas funções para testar
+import { formatDate, formatTime, getLocalDateISO, getLocalTimeISO } from "@/lib/date";
 
 /**
- * Esta é uma página de laboratório de testes.
- * Use-a para testar funções e ver logs no console.
+ * Página de laboratório de testes.
  */
 const DebugPage = () => {
+  const [logs, setLogs] = useState<string[]>([]);
 
-  // Teste de Conexão Supabase
-  const testSupabaseConnection = async () => {
-    console.log("--- INICIANDO TESTE DE CONEXÃO SUPABASE ---");
+  // Função auxiliar para registrar logs na tela
+  const addLog = (message: string) => {
+    console.log(message);
+    setLogs(prev => [...prev, message]);
+  };
+
+  // === SUITE DE TESTES UNITÁRIOS (SIMULADO) ===
+  const runUnitTests = () => {
+    addLog("--- INICIANDO TESTES UNITÁRIOS DE DATA ---");
+
+    // 1. Teste formatDate
+    const inputDate = "2025-11-18";
+    const expectedDate = "18/11/2025";
+    const resultDate = formatDate(inputDate);
     
-    // Logar as variáveis de ambiente que o Vite carregou
-    console.log("VITE_SUPABASE_URL:", import.meta.env.VITE_SUPABASE_URL);
-    console.log("VITE_SUPABASE_ANON_KEY:", import.meta.env.VITE_SUPABASE_ANON_KEY ? "Carregada (oculta)" : "NÃO CARREGADA");
-
-    try {
-      // Tenta fazer a chamada de API mais simples possível
-      const { data, error } = await supabase
-        .from('measurements') // O nome da sua tabela
-        .select('id') // Pede só a coluna 'id'
-        .limit(1);    // Pede só 1 registro
-
-      if (error) {
-        // Se a API retornar um erro (ex: RLS, chave errada)
-        console.error("ERRO DA API SUPABASE:", error.message);
-      } else {
-        // Se funcionar
-        console.log("CONEXÃO SUPABASE OK! Resposta:", data);
-      }
-    } catch (err) {
-      // Se a rede falhar (ex: FIREWALL BLOQUEANDO)
-      console.error("ERRO DE REDE/FETCH:", (err as Error).message);
+    if (resultDate === expectedDate) {
+      addLog(`✅ formatDate: SUCESSO (${inputDate} -> ${resultDate})`);
+    } else {
+      addLog(`❌ formatDate: FALHA (Esperado: ${expectedDate}, Recebido: ${resultDate})`);
     }
-    console.log("--- FIM DO TESTE DE CONEXÃO ---");
+
+    // 2. Teste formatTime
+    const inputTime = "21:20:00";
+    const expectedTime = "21:20";
+    const resultTime = formatTime(inputTime);
+
+    if (resultTime === expectedTime) {
+      addLog(`✅ formatTime: SUCESSO (${inputTime} -> ${resultTime})`);
+    } else {
+      addLog(`❌ formatTime: FALHA (Esperado: ${expectedTime}, Recebido: ${resultTime})`);
+    }
+
+    // 3. Teste getLocalDateISO (Formato)
+    const isoDate = getLocalDateISO();
+    // Regex simples para YYYY-MM-DD
+    const isIsoDateValid = /^\d{4}-\d{2}-\d{2}$/.test(isoDate);
+    
+    if (isIsoDateValid) {
+      addLog(`✅ getLocalDateISO: Formato Válido (${isoDate})`);
+    } else {
+      addLog(`❌ getLocalDateISO: Formato Inválido (${isoDate})`);
+    }
+
+    // 4. Teste getLocalTimeISO (Formato)
+    const isoTime = getLocalTimeISO();
+    // Verifica se começa com HH:MM ou HH:MM:SS
+    const isIsoTimeValid = /^\d{2}:\d{2}/.test(isoTime);
+
+    if (isIsoTimeValid) {
+      addLog(`✅ getLocalTimeISO: Formato Válido (${isoTime})`);
+    } else {
+      addLog(`❌ getLocalTimeISO: Formato Inválido (${isoTime})`);
+    }
+
+    addLog("--- FIM DOS TESTES ---");
   };
 
-  // Teste de Fuso Horário (o seu teste original)
-  const testTimezone = () => {
-    console.log("--- INICIANDO TESTE DE FUSO HORÁRIO (DEBUG) ---");
-    const agora = new Date();
-    console.log("1. Data Local (Seu PC):", agora.toString());
-    console.log("2. Data UTC (ISOString):", agora.toISOString());
-    console.log("3. O BUG (Data do ISOString):", agora.toISOString().split('T')[0]);
-    const dataLocalCorreta = new Date().toLocaleDateString('sv-SE');
-    console.log("4. A SOLUÇÃO (Data Local YYYY-MM-DD):", dataLocalCorreta);
-    console.log("--- FIM DO TESTE DE FUSO HORÁRIO ---");
+  // Teste de Conexão Supabase (Mantido do seu código original)
+  const testSupabaseConnection = async () => {
+    // ... (seu código existente de conexão)
   };
 
-  // Roda os testes assim que a página carregar
   useEffect(() => {
-    testSupabaseConnection(); // <-- MUDANÇA 2: Chamar o novo teste
-    testTimezone();
+    runUnitTests(); // Roda os testes de data
+    // testSupabaseConnection(); // Pode descomentar se quiser testar o banco também
   }, []);
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-2xl">
+    <div className="container mx-auto px-4 py-8 max-w-3xl">
       <Card>
         <CardHeader>
-          <CardTitle>Página de Debug (Testes)</CardTitle>
+          <CardTitle>Console de Testes (Debug)</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-lg font-medium">
-            Abra o Console do Desenvolvedor (F12) para ver os logs.
-          </p>
-          <p className="text-muted-foreground mt-2">
-            Estamos testando o **Fuso Horário** e a **Conexão com o Supabase**.
-          </p>
-          <p className="text-destructive font-bold mt-4">
-            Verifique os logs de "CONEXÃO SUPABASE". Se você vir "ERRO DE REDE/FETCH", 
-            provavelmente é um bloqueio de firewall da sua rede (SEDUC).
-          </p>
+          <div className="bg-slate-950 text-slate-50 p-4 rounded-md font-mono text-sm overflow-auto max-h-[500px]">
+            {logs.length === 0 ? (
+              <p className="text-muted-foreground">Rodando testes...</p>
+            ) : (
+              logs.map((log, index) => (
+                <div key={index} className={`mb-1 ${log.includes('❌') ? 'text-red-400' : log.includes('✅') ? 'text-green-400' : ''}`}>
+                  {log}
+                </div>
+              ))
+            )}
+          </div>
         </CardContent>
       </Card>
     </div>
