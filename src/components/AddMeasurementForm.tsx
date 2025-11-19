@@ -43,7 +43,7 @@ export const AddMeasurementForm = ({ onAdd }: AddMeasurementFormProps) => {
 
     const newMeasurement = {
       // MUDANÇA 3: Usar a função central para garantir o formato local
-      date: new Date(formData.date).toLocaleDateString('sv-SE'),
+      date: formData.date,
       time: formData.time.length === 5 ? formData.time + ":00" : formData.time,
       systolic: parseInt(formData.systolic),
       diastolic: parseInt(formData.diastolic),
