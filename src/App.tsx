@@ -15,7 +15,6 @@ import History from "./pages/History";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 import Ajuda from "./pages/Ajuda";
-import DebugPage from "./pages/Debug";
 
 const queryClient = new QueryClient();
 
@@ -38,7 +37,6 @@ const App = () => (
               <Route path="/settings" element={<Settings />} />
               <Route path="/ajuda" element={<Ajuda />} />
 
-              <Route path="/debug" element={<DebugPage />} />
               {/* novas pages aqui */}
               <Route path="*" element={<NotFound />} />
             </Routes>
