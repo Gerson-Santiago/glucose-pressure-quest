@@ -53,9 +53,9 @@ const Dashboard = () => {
         {/* === Seção do Formulário Expansível === */}
         <div className="mt-10 space-y-4">
           <div className="flex items-center justify-between">
-            
+
             {/* Título clicável para expandir/recolher (Melhoria de UX) */}
-            <h3 
+            <h3
               className="text-2xl font-semibold flex items-center gap-2 cursor-pointer select-none"
               onClick={() => setShowForm(!showForm)}
               role="button"
@@ -87,13 +87,6 @@ const Dashboard = () => {
         {/* === Seção de Métricas (Cards) === */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <MetricCard
-            title="Última Glicemia"
-            value={lastMeasurement ? `${lastMeasurement.glucose} mg/dL` : "-"}
-            subtitle={`Média: ${stats.avgGlucose} mg/dL`}
-            icon={Droplet}
-            status={glucoseStatus ?? undefined}
-          />
-          <MetricCard
             title="Última Pressão Arterial"
             value={lastMeasurement ? `${lastMeasurement.systolic}/${lastMeasurement.diastolic}` : "-"}
             subtitle={`Média: ${stats.avgSystolic}/${stats.avgDiastolic} mmHg`}
@@ -105,6 +98,13 @@ const Dashboard = () => {
             value={lastMeasurement ? `${lastMeasurement.pulse} bpm` : "-"}
             subtitle={`Média: ${stats.avgPulse} bpm`}
             icon={Heart}
+          />
+          <MetricCard
+            title="Última Glicemia"
+            value={lastMeasurement ? `${lastMeasurement.glucose} mg/dL` : "-"}
+            subtitle={`Média: ${stats.avgGlucose} mg/dL`}
+            icon={Droplet}
+            status={glucoseStatus ?? undefined}
           />
           <MetricCard
             title="Total de Medições"
@@ -128,8 +128,8 @@ const Dashboard = () => {
 
           {/* Gráficos sempre visíveis */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <MeasurementChart measurements={measurements} type="glucose" />
             <MeasurementChart measurements={measurements} type="pressure" />
+            <MeasurementChart measurements={measurements} type="glucose" />
           </div>
         </div>
 

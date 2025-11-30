@@ -31,8 +31,8 @@ export const MeasurementTable = ({ measurements, onDelete }: MeasurementTablePro
                 <TableHead className="whitespace-nowrap">Data</TableHead>
                 <TableHead>Hora</TableHead>
                 <TableHead>PA (mmHg)</TableHead>
-                <TableHead>Glicemia</TableHead>
                 <TableHead>Pulso</TableHead>
+                <TableHead>Glicemia</TableHead>
                 {showStatus && <TableHead>Status</TableHead>}
                 {onDelete && showDeleteButtons && <TableHead className="w-[50px]"></TableHead>}
               </TableRow>
@@ -50,8 +50,8 @@ export const MeasurementTable = ({ measurements, onDelete }: MeasurementTablePro
                     </TableCell>
                     <TableCell>{formatTime(measurement.time)}</TableCell>
                     <TableCell>{measurement.systolic}/{measurement.diastolic}</TableCell>
-                    <TableCell>{measurement.glucose}</TableCell>
                     <TableCell>{measurement.pulse}</TableCell>
+                    <TableCell>{measurement.glucose}</TableCell>
                     {showStatus && (
                       <TableCell>
                         <div className="flex gap-1 flex-wrap min-w-[140px]">

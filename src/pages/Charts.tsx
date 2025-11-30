@@ -19,7 +19,7 @@ const Charts = () => {
   // O campo 'period' já está preenchido pelo measurementUtils.ts
   const measurementsManha = measurements.filter(m => m.period === 'Manhã');
   const measurementsNoite = measurements.filter(m => m.period === 'Noite');
-  
+
   const hasManhaData = measurementsManha.length > 0;
   const hasNoiteData = measurementsNoite.length > 0;
   const hasAnyData = measurements.length > 0;
@@ -58,15 +58,15 @@ const Charts = () => {
             Tendência Geral (Todas as Horas)
           </h2>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <MeasurementChart 
-              measurements={measurements} 
-              type="glucose" 
-              titlePrefix="Glicemia"
-            />
-            <MeasurementChart 
-              measurements={measurements} 
-              type="pressure" 
+            <MeasurementChart
+              measurements={measurements}
+              type="pressure"
               titlePrefix="Pressão Arterial"
+            />
+            <MeasurementChart
+              measurements={measurements}
+              type="glucose"
+              titlePrefix="Glicemia"
             />
           </div>
         </div>
@@ -80,22 +80,22 @@ const Charts = () => {
             Medições da Manhã (05:00h - 11:59h)
           </h2>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* 3º Gráfico: Glicemia da Manhã */}
-            <MeasurementChart 
-              measurements={measurementsManha} 
-              type="glucose" 
-              titlePrefix="Glicemia"
-            />
-            {/* 4º Gráfico: Pressão da Manhã */}
-            <MeasurementChart 
-              measurements={measurementsManha} 
-              type="pressure" 
+            {/* 3º Gráfico: Pressão da Manhã */}
+            <MeasurementChart
+              measurements={measurementsManha}
+              type="pressure"
               titlePrefix="Pressão Arterial"
+            />
+            {/* 4º Gráfico: Glicemia da Manhã */}
+            <MeasurementChart
+              measurements={measurementsManha}
+              type="glucose"
+              titlePrefix="Glicemia"
             />
           </div>
         </div>
       )}
-      
+
       {/* --- Seção 3: Análise por Noite --- */}
       {hasNoiteData && (
         <div className="mb-10 pt-8 border-t border-border">
@@ -104,17 +104,17 @@ const Charts = () => {
             Medições da Noite (12:00h - 04:59h)
           </h2>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* 5º Gráfico: Glicemia da Noite */}
-            <MeasurementChart 
-              measurements={measurementsNoite} 
-              type="glucose" 
-              titlePrefix="Glicemia"
-            />
-            {/* 6º Gráfico: Pressão da Noite */}
-            <MeasurementChart 
-              measurements={measurementsNoite} 
-              type="pressure" 
+            {/* 5º Gráfico: Pressão da Noite */}
+            <MeasurementChart
+              measurements={measurementsNoite}
+              type="pressure"
               titlePrefix="Pressão Arterial"
+            />
+            {/* 6º Gráfico: Glicemia da Noite */}
+            <MeasurementChart
+              measurements={measurementsNoite}
+              type="glucose"
+              titlePrefix="Glicemia"
             />
           </div>
         </div>
