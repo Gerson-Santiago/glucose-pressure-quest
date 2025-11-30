@@ -6,8 +6,9 @@ import { toast } from "sonner";
 // MUDANÇA 1: Importar a função centralizada
 import { getFormattedTimestamp, getLocalDateISO } from "@/lib/date";
 
-declare const html2canvas: any;
-declare const jspdf: any;
+declare const html2canvas: (element: HTMLElement, options?: object) => Promise<HTMLCanvasElement>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+declare const jspdf: { jsPDF: new (orientation?: string, unit?: string, format?: string) => any };
 
 interface ReportButtonProps {
   targetId: string;
@@ -41,14 +42,14 @@ export const ReportButton = ({ targetId }: ReportButtonProps) => {
 
       pdf.setFontSize(20);
       pdf.text("Relatório de Medições", pdfWidth / 2, 15, { align: "center" });
-      
+
       // MUDANÇA 2: Usar timestamp seguro do lib/date.ts
       const timestamp = getFormattedTimestamp();
       pdf.setFontSize(10);
       pdf.text(`Gerado em: ${timestamp}`, pdfWidth / 2, 22, { align: "center" });
 
       pdf.addImage(imgData, 'PNG', imgX, 30, imgWidth * ratio, imgHeight * ratio);
-      
+
       // MUDANÇA 3: Nome do arquivo seguro
       const dateISO = getLocalDateISO();
       pdf.save(`relatorio_saude_${dateISO}.pdf`);
