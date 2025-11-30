@@ -1,9 +1,8 @@
-// src/App.tsx <--- é minha marca registrada minha assinatura meu estilo colocar o path relativo ok?
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { HashRouter, Routes, Route } from "react-router-dom";
 import { MeasurementProvider } from "@/contexts/MeasurementContext";
 import { SettingsProvider } from "@/contexts/SettingsContext";
 import { Navigation } from "@/components/Navigation";
@@ -20,10 +19,6 @@ import DebugPage from "./pages/Debug";
 
 const queryClient = new QueryClient();
 
-// MUDANÇA: Obtém o caminho base da variável de ambiente
-// Se não estiver definida (ex: em dev), usa '/'
-const basename = import.meta.env.VITE_APP_BASE_PATH || '/';
-
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -31,14 +26,7 @@ const App = () => (
         <MeasurementProvider>
           <Toaster />
           <Sonner />
-          {/* MUDANÇA: Adiciona o basename ao BrowserRouter e flags futuras */}
-          <BrowserRouter
-            basename={basename}
-            future={{
-              v7_startTransition: true,
-              v7_relativeSplatPath: true,
-            }}
-          >
+          <HashRouter>
             <Navigation />
             <Routes>
               {/* { Rotas atualizadas} */}
@@ -54,7 +42,7 @@ const App = () => (
               {/* novas pages aqui */}
               <Route path="*" element={<NotFound />} />
             </Routes>
-          </BrowserRouter>
+          </HashRouter>
         </MeasurementProvider>
       </SettingsProvider>
     </TooltipProvider>
