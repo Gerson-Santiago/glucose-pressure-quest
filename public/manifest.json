@@ -8,7 +8,7 @@
     "display": "standalone",
     "background_color": "#ffffff",
     "theme_color": "#007bff",
-    "orientation": "portrait-or-landscape",
+    "orientation": "any",
     "categories": [
         "health",
         "fitness"
@@ -38,7 +38,7 @@
             "name": "Adicionar medição",
             "short_name": "Adicionar",
             "description": "Registrar nova medição de glicose ou pressão",
-            "url": "/add",
+            "url": "/glucose-pressure-quest/add",
             "icons": [
                 {
                     "src": "/icon-192x192.png",

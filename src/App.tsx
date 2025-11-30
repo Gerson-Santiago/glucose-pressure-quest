@@ -31,8 +31,14 @@ const App = () => (
         <MeasurementProvider>
           <Toaster />
           <Sonner />
-          {/* MUDANÇA: Adiciona o basename ao BrowserRouter */}
-          <BrowserRouter basename={basename}>
+          {/* MUDANÇA: Adiciona o basename ao BrowserRouter e flags futuras */}
+          <BrowserRouter
+            basename={basename}
+            future={{
+              v7_startTransition: true,
+              v7_relativeSplatPath: true,
+            }}
+          >
             <Navigation />
             <Routes>
               {/* { Rotas atualizadas} */}
