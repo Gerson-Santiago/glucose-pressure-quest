@@ -16,8 +16,9 @@ interface AddMeasurementFormProps {
     time: string;
     systolic: number;
     diastolic: number;
-    glucose: number;
     pulse: number;
+    glucose: number;
+
   }) => Promise<void> | void;
 }
 
@@ -29,8 +30,8 @@ export const AddMeasurementForm = ({ onAdd }: AddMeasurementFormProps) => {
     time: getLocalTimeISO(), // <-- Usa a função central
     systolic: "",
     diastolic: "",
-    glucose: "",
     pulse: "",
+    glucose: "",
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -47,8 +48,8 @@ export const AddMeasurementForm = ({ onAdd }: AddMeasurementFormProps) => {
       time: formData.time.length === 5 ? formData.time + ":00" : formData.time,
       systolic: parseInt(formData.systolic),
       diastolic: parseInt(formData.diastolic),
-      glucose: parseInt(formData.glucose),
       pulse: parseInt(formData.pulse),
+      glucose: parseInt(formData.glucose),
     };
 
     console.log("Payload enviado:", newMeasurement);
@@ -62,8 +63,8 @@ export const AddMeasurementForm = ({ onAdd }: AddMeasurementFormProps) => {
         time: getLocalTimeISO(), // <-- Usa a função central
         systolic: "",
         diastolic: "",
-        glucose: "",
         pulse: "",
+        glucose: "",
       });
 
     } catch (error) {
@@ -103,7 +104,7 @@ export const AddMeasurementForm = ({ onAdd }: AddMeasurementFormProps) => {
             </div>
           </div>
 
-          {/* Seção Pressão */}
+          {/* Seção Pressão e pulso*/}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="systolic">Pressão Sistólica (mmHg)</Label>
@@ -125,9 +126,19 @@ export const AddMeasurementForm = ({ onAdd }: AddMeasurementFormProps) => {
                 placeholder="Ex: 80"
               />
             </div>
+                        <div className="space-y-2">
+              <Label htmlFor="pulse">Pulso (bpm)</Label>
+              <Input
+                id="pulse"
+                type="number"
+                value={formData.pulse}
+                onChange={(e) => setFormData({ ...formData, pulse: e.target.value })}
+                placeholder="Ex: 72"
+              />
+            </div>
           </div>
 
-          {/* Seção Glicemia e Pulso */}
+          {/* Seção Glicemia*/}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="glucose">Glicemia (mg/dL)</Label>
@@ -139,16 +150,7 @@ export const AddMeasurementForm = ({ onAdd }: AddMeasurementFormProps) => {
                 placeholder="Ex: 95"
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="pulse">Pulso (bpm)</Label>
-              <Input
-                id="pulse"
-                type="number"
-                value={formData.pulse}
-                onChange={(e) => setFormData({ ...formData, pulse: e.target.value })}
-                placeholder="Ex: 72"
-              />
-            </div>
+
           </div>
 
           {/* Botão de envio */}
