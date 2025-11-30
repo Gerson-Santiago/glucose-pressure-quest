@@ -14,7 +14,7 @@ const Debug = () => {
     };
 
     // Executa os testes
-    runDateTests();
+    // runDateTests(); // Removed during cleanup
 
     // Limpa a sobrescrita ao sair
     return () => {
@@ -34,7 +34,7 @@ const Debug = () => {
             <p><strong>Data ISO (getLocalDateISO):</strong> {getLocalDateISO()}</p>
             <p><strong>Hora ISO (getLocalTimeISO):</strong> {getLocalTimeISO()}</p>
           </div>
-          
+
           <div className="border-t pt-4">
             <h3 className="font-bold mb-2">Logs de Teste:</h3>
             <div className="bg-black text-green-400 p-4 rounded h-64 overflow-auto font-mono text-xs">
