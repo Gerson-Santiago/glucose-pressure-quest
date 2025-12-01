@@ -14,10 +14,10 @@ export function formatDate(dateString: string | null): string {
   // Adicionando 'T12:00:00' garantimos que fique no meio do dia, evitando viradas de data por fuso.
   // Mas a melhor forma é fazer o parse manual se for só data.
   if (dateString.length === 10) {
-      const [year, month, day] = dateString.split('-').map(Number);
-      return new Date(year, month - 1, day).toLocaleDateString('pt-BR');
+    const [year, month, day] = dateString.split('-').map(Number);
+    return new Date(year, month - 1, day).toLocaleDateString('pt-BR');
   }
-  
+
   return new Date(dateString).toLocaleDateString('pt-BR');
 }
 
@@ -58,22 +58,5 @@ export function getFormattedTimestamp(): string {
   return format(new Date(), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR });
 }
 
-// --- TESTES UNITÁRIOS MANUAIS (Para rodar no console) ---
-export function runDateTests() {
-    console.group("Testes Unitários de Data/Hora");
-    
-    const testDate = "2025-11-16";
-    const formatted = formatDate(testDate);
-    console.assert(formatted === "16/11/2025", `Erro formatDate: ${formatted} != 16/11/2025`);
-    console.log("Teste formatDate:", formatted === "16/11/2025" ? "OK" : "FALHOU");
-
-    const todayISO = getLocalDateISO();
-    console.log("Data de Hoje (ISO Local):", todayISO);
-    // Verifica se o formato é YYYY-MM-DD
-    console.assert(/^\d{4}-\d{2}-\d{2}$/.test(todayISO), "Erro getLocalDateISO: Formato inválido");
-
-    const timeISO = getLocalTimeISO();
-    console.log("Hora de Agora (ISO Local):", timeISO);
-    
-    console.groupEnd();
-}
+// --- TESTES UNITÁRIOS MANUAIS (Removido) ---
+// export function runDateTests() { ... }

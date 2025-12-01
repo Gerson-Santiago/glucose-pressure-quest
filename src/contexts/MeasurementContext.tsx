@@ -157,6 +157,7 @@ export const MeasurementProvider = ({ children }: { children: ReactNode }) => {
 // Hook para acesso rápido
 // -------------------------------------------------------
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useMeasurements = () => {
   const ctx = useContext(MeasurementContext);
   if (!ctx)

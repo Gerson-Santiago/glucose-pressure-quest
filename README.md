@@ -1,73 +1,59 @@
-# Welcome to your Lovable project
+# Glucose Pressure Quest
 
-## Project info
+Um aplicativo moderno para monitoramento de Glicemia e Pressão Arterial.
 
-**URL**: https://lovable.dev/projects/b87227b0-05ca-4104-95a3-f7cd9d1e4fac
+## Sobre o Projeto
 
-## How can I edit this code?
+Este projeto foi desenvolvido para auxiliar no controle e acompanhamento de medições de saúde, especificamente glicose e pressão arterial. O aplicativo permite o registro fácil de dados, visualização de histórico e análise através de gráficos e métricas.
 
-There are several ways of editing your application.
+## Funcionalidades
 
-**Use Lovable**
+-   **Dashboard**: Visão geral com as últimas medições e médias.
+-   **Registro de Medições**: Formulário intuitivo para adicionar dados de Pressão Arterial (Sistólica/Diastólica), Pulso e Glicemia.
+-   **Histórico**: Tabela completa com todas as medições registradas, com opção de exclusão.
+-   **Gráficos e Análise**: Visualização de tendências ao longo do tempo, com filtros por período (Manhã/Noite).
+-   **Relatórios**: Geração de relatórios em PDF do histórico de medições.
+-   **Design Responsivo**: Interface adaptável para dispositivos móveis e desktop.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/b87227b0-05ca-4104-95a3-f7cd9d1e4fac) and start prompting.
+## Tecnologias Utilizadas
 
-Changes made via Lovable will be committed automatically to this repo.
+-   [React](https://react.dev/)
+-   [TypeScript](https://www.typescriptlang.org/)
+-   [Vite](https://vitejs.dev/)
+-   [Tailwind CSS](https://tailwindcss.com/)
+-   [shadcn/ui](https://ui.shadcn.com/)
+-   [Recharts](https://recharts.org/) (para gráficos)
+-   [Sonner](https://sonner.emilkowal.ski/) (para notificações)
 
-**Use your preferred IDE**
+## Como Executar
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+Pré-requisitos: Node.js e npm instalados.
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+1.  Clone o repositório:
+    ```bash
+    git clone <URL_DO_REPOSITORIO>
+    cd glucose-pressure-quest
+    ```
 
-Follow these steps:
+2.  Instale as dependências:
+    ```bash
+    npm install
+    ```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+3.  Inicie o servidor de desenvolvimento:
+    ```bash
+    npm run dev
+    ```
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+4.  Acesse o aplicativo no navegador (geralmente em `http://localhost:8080` ou `http://localhost:5173`).
 
-# Step 3: Install the necessary dependencies.
-npm i
+## Estrutura do Projeto
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+-   `src/components`: Componentes reutilizáveis (Formulários, Tabelas, Gráficos, UI).
+-   `src/pages`: Páginas principais da aplicação (Dashboard, Histórico, Gráficos).
+-   `src/contexts`: Gerenciamento de estado global (Medições, Configurações).
+-   `src/lib`: Utilitários e funções auxiliares.
 
-**Edit a file directly in GitHub**
+## Licença
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/b87227b0-05ca-4104-95a3-f7cd9d1e4fac) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+Este projeto está sob a licença MIT.
